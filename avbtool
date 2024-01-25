@@ -1975,10 +1975,6 @@ class Avb(object):
       AvbError: If there's no footer in the image.
     """
     image = ImageHandler(image_filename)
-    if partition_size % image.block_size != 0:
-      raise AvbError('Partition size of {} is not a multiple of the image '
-                     'block size {}.'.format(partition_size,
-                                             image.block_size))
     (footer, _, _, _) = self._parse_image(image)
     if not footer:
       raise AvbError('Given image does not have a footer.')
@@ -2778,10 +2774,6 @@ class Avb(object):
       AvbError: If an argument is incorrect or if appending VBMeta image fialed.
     """
     image = ImageHandler(image_filename)
-    if partition_size % image.block_size != 0:
-      raise AvbError('Partition size of {} is not a multiple of the image '
-                     'block size {}.'.format(partition_size,
-                                             image.block_size))
     # If there's already a footer, truncate the image to its original
     # size. This way 'avbtool append_vbmeta_image' is idempotent.
     if image.image_size >= AvbFooter.SIZE:
@@ -2935,10 +2927,6 @@ class Avb(object):
       partition_size = round_to_multiple(
           original_image_size + max_metadata_size, image.block_size)
     max_image_size = partition_size - max_metadata_size
-    if partition_size % image.block_size != 0:
-      raise AvbError('Partition size of {} is not a multiple of the image '
-                     'block size {}.'.format(partition_size,
-                                             image.block_size))
     # If anything goes wrong from here-on, restore the image back to
     # its original size.
     try:
@@ -3128,15 +3116,6 @@ class Avb(object):
       print('{}'.format(max_image_size))
       return
     image = ImageHandler(image_filename)
-    if partition_size > 0:
-      if partition_size % image.block_size != 0:
-        raise AvbError('Partition size of {} is not a multiple of the image '
-                       'block size {}.'.format(partition_size,
-                                               image.block_size))
-    elif image.image_size % image.block_size != 0:
-      raise AvbError('File size of {} is not a multiple of the image '
-                     'block size {}.'.format(image.image_size,
-                                             image.block_size))
     # If there's already a footer, truncate the image to its original
     # size. This way 'avbtool add_hashtree_footer' is idempotent
     # (modulo salts).
